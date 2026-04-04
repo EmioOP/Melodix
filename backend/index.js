@@ -8,8 +8,10 @@ const testRoutes = require("./routes/testRoutes");
 const playlistRoutes = require("./routes/playlistRoutes");
 const youtubeRoutes = require("./routes/youtubeRoutes");
 const streamRoutes = require("./routes/streamRoutes");
+const rateLimit = require('express-rate-limit');
 
 const app = express();
+
 
 // Connect to DB then start server
 async function startServer() {
@@ -22,8 +24,21 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
+// Global rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+	  limit: 50,
+    message:"Too many request from this IP, please try later"
+});
+
+
+
+
 app.use(cors(corsOptions));
 app.use(express.json());
+
+//security middlewares
+app.use("/api",limiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
