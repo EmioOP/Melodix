@@ -164,142 +164,157 @@ function PlayerBar() {
       )}
 
       <footer
-        className="relative w-full z-40 flex items-center justify-between gap-2 px-2 md:px-4 border-t border-[rgba(255,255,255,0.06)] flex-shrink-0"
-        style={{
-          minHeight: "var(--player-total-height)",
-          paddingBottom: "var(--player-safe-bottom)",
-          background: "#181818",
-        }}
-      >
-        {/* Left: song info (hidden on mobile) */}
-        <div className="flex min-w-0 items-center gap-2 md:gap-3 w-[34%] md:w-[30%] text-left">
-          {currentSong ? (
-            <>
-              <img
-                src={currentSong.thumbnail}
-                alt={currentSong.name || currentSong.title}
-                className="w-10 h-10 md:w-14 md:h-14 rounded object-cover flex-shrink-0"
-              />
-              <div className="min-w-0">
-                <p className="text-xs md:text-sm font-semibold text-white truncate hover:underline cursor-pointer">
-                  {currentSong.name || currentSong.title}
-                </p>
-                <p className="text-[11px] md:text-xs text-sp-dim truncate hover:text-white hover:underline cursor-pointer">
-                  {currentSong.artist}
-                </p>
-              </div>
-            </>
-          ) : (
-            <div className="text-sp-muted text-[11px] md:text-xs">No song playing</div>
-          )}
-        </div>
+  className="relative w-full z-40 flex-shrink-0 border-t border-[rgba(255,255,255,0.06)]"
+  style={{
+    minHeight: "var(--player-total-height)",
+    paddingBottom: "var(--player-safe-bottom)",
+    background: "#181818",
+  }}
+>
+  {/* Mobile: stacked layout. Desktop: single row */}
+  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-1 md:gap-2 px-2 md:px-4 py-1 md:py-0 h-full">
 
-        {/* Center: controls */}
-        <div className="flex flex-col items-center gap-2 w-[46%] md:w-[40%] min-w-0">
-          <div className="flex items-center gap-2 md:gap-5">
-            <button
-              onClick={toggleShuffle}
-              className={`transition-colors ${isShuffle ? "text-sp-green" : "text-sp-dim hover:text-white"}`}
-              title="Toggle Shuffle (S)"
-            >
-              <Shuffle size={15} />
-            </button>
-
-            <button
-              onClick={prevSong}
-              className="text-sp-dim hover:text-white transition-colors"
-              title="Previous (Shift+Left)"
-            >
-              <SkipBack size={18} fill="currentColor" />
-            </button>
-
-            <button
-              onClick={togglePlay}
-              disabled={!currentSong}
-              className="w-9 h-9 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center hover:scale-105 transition-transform disabled:opacity-40"
-              title="Play/Pause (Space)"
-            >
-              {isLoading ? (
-                <Loader2 size={18} className="animate-spin text-black" />
-              ) : isPlaying ? (
-                <Pause size={18} fill="black" className="text-black" />
-              ) : (
-                <Play size={18} fill="black" className="text-black ml-0.5" />
-              )}
-            </button>
-
-            <button
-              onClick={nextSong}
-              className="text-sp-dim hover:text-white transition-colors"
-              title="Next (Shift+Right)"
-            >
-              <SkipForward size={18} fill="currentColor" />
-            </button>
-
-            <button
-              onClick={toggleRepeat}
-              className={`transition-colors ${repeatMode !== "none" ? "text-sp-green" : "text-sp-dim hover:text-white"}`}
-              title="Toggle Repeat (L)"
-            >
-              <RepeatIcon size={15} />
-            </button>
-          </div>
-
-          {/* Progress bar */}
-          <div className="flex items-center gap-2 w-full max-w-lg group">
-            <span className="text-[10px] text-sp-muted w-10 text-right tabular-nums">
-              {fmtTime(currentTime)}
-            </span>
-            <div className="relative flex-1 h-3 flex items-center">
-               <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.001}
-                value={progress || 0}
-                onChange={(e) => seek(parseFloat(e.target.value))}
-                className="w-full h-1 rounded-full appearance-none bg-[rgba(255,255,255,0.1)] cursor-pointer outline-none"
-                style={{
-                  background: `linear-gradient(to right, #1db954 ${progress * 100}%, rgba(255,255,255,0.1) ${progress * 100}%)`,
-                }}
-              />
+    {/* Top row on mobile: song info + queue/volume */}
+    <div className="flex items-center justify-between md:w-[30%]">
+      {/* Left: song info */}
+      <div className="flex min-w-0 items-center gap-2 md:gap-3 text-left">
+        {currentSong ? (
+          <>
+            <img
+              src={currentSong.thumbnail}
+              alt={currentSong.name || currentSong.title}
+              className="w-9 h-9 md:w-14 md:h-14 rounded object-cover flex-shrink-0"
+            />
+            <div className="min-w-0">
+              <p className="text-xs md:text-sm font-semibold text-white truncate hover:underline cursor-pointer">
+                {currentSong.name || currentSong.title}
+              </p>
+              <p className="text-[11px] md:text-xs text-sp-dim truncate hover:text-white hover:underline cursor-pointer">
+                {currentSong.artist}
+              </p>
             </div>
-            <span className="text-[10px] text-sp-muted w-10 tabular-nums">
-              {fmtTime(duration)}
-            </span>
-          </div>
-        </div>
+          </>
+        ) : (
+          <div className="text-sp-muted text-[11px] md:text-xs">No song playing</div>
+        )}
+      </div>
 
-        {/* Right: queue + volume (hidden on mobile) */}
-        <div className="flex items-center gap-2 w-[20%] md:w-[30%] justify-end">
-          <button
-            onClick={() => setIsQueueOpen((value) => !value)}
-            className={`transition-colors ${isQueueOpen ? "text-white" : "text-sp-dim hover:text-white"}`}
-            title="Queue"
-          >
-            <ListMusic size={18} />
-          </button>
-          <button
-            onClick={toggleMute}
-            className="hidden md:inline-flex text-sp-dim hover:text-white transition-colors"
-            title="Mute (M)"
-          >
-            <VolumeIcon size={18} />
-          </button>
+      {/* Right controls: visible on mobile here, hidden on desktop (shown in its own column) */}
+      <div className="flex items-center gap-2 md:hidden">
+        <button
+          onClick={() => setIsQueueOpen((value) => !value)}
+          className={`transition-colors ${isQueueOpen ? "text-white" : "text-sp-dim hover:text-white"}`}
+          title="Queue"
+        >
+          <ListMusic size={18} />
+        </button>
+      </div>
+    </div>
+
+    {/* Center: playback controls — always centered */}
+    <div className="flex flex-col items-center gap-1 md:gap-2 md:w-[40%] min-w-0">
+      <div className="flex items-center gap-3 md:gap-5">
+        <button
+          onClick={toggleShuffle}
+          className={`transition-colors ${isShuffle ? "text-sp-green" : "text-sp-dim hover:text-white"}`}
+          title="Toggle Shuffle (S)"
+        >
+          <Shuffle size={15} />
+        </button>
+        <button
+          onClick={prevSong}
+          className="text-sp-dim hover:text-white transition-colors"
+          title="Previous (Shift+Left)"
+        >
+          <SkipBack size={18} fill="currentColor" />
+        </button>
+        <button
+          onClick={togglePlay}
+          disabled={!currentSong}
+          className="w-9 h-9 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center hover:scale-105 transition-transform disabled:opacity-40"
+          title="Play/Pause (Space)"
+        >
+          {isLoading ? (
+            <Loader2 size={18} className="animate-spin text-black" />
+          ) : isPlaying ? (
+            <Pause size={18} fill="black" className="text-black" />
+          ) : (
+            <Play size={18} fill="black" className="text-black ml-0.5" />
+          )}
+        </button>
+        <button
+          onClick={nextSong}
+          className="text-sp-dim hover:text-white transition-colors"
+          title="Next (Shift+Right)"
+        >
+          <SkipForward size={18} fill="currentColor" />
+        </button>
+        <button
+          onClick={toggleRepeat}
+          className={`transition-colors ${repeatMode !== "none" ? "text-sp-green" : "text-sp-dim hover:text-white"}`}
+          title="Toggle Repeat (L)"
+        >
+          <RepeatIcon size={15} />
+        </button>
+      </div>
+
+      {/* Progress bar */}
+      <div className="flex items-center gap-2 w-full max-w-lg group">
+        <span className="text-[10px] text-sp-muted w-10 text-right tabular-nums">
+          {fmtTime(currentTime)}
+        </span>
+        <div className="relative flex-1 h-3 flex items-center">
           <input
             type="range"
             min={0}
             max={1}
-            step={0.01}
-            value={isMuted ? 0 : volume}
-            onChange={(e) => setVolume(parseFloat(e.target.value))}
-            className="hidden md:block w-24 h-1"
+            step={0.001}
+            value={progress || 0}
+            onChange={(e) => seek(parseFloat(e.target.value))}
+            className="w-full h-1 rounded-full appearance-none bg-[rgba(255,255,255,0.1)] cursor-pointer outline-none"
             style={{
-              background: `linear-gradient(to right, #1db954 ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.1) ${(isMuted ? 0 : volume) * 100}%)`,
+              background: `linear-gradient(to right, #1db954 ${progress * 100}%, rgba(255,255,255,0.1) ${progress * 100}%)`,
             }}
           />
         </div>
-      </footer>
+        <span className="text-[10px] text-sp-muted w-10 tabular-nums">
+          {fmtTime(duration)}
+        </span>
+      </div>
+    </div>
+
+    {/* Right: queue + volume — desktop only */}
+    <div className="hidden md:flex items-center gap-2 md:w-[30%] justify-end">
+      <button
+        onClick={() => setIsQueueOpen((value) => !value)}
+        className={`transition-colors ${isQueueOpen ? "text-white" : "text-sp-dim hover:text-white"}`}
+        title="Queue"
+      >
+        <ListMusic size={18} />
+      </button>
+      <button
+        onClick={toggleMute}
+        className="text-sp-dim hover:text-white transition-colors"
+        title="Mute (M)"
+      >
+        <VolumeIcon size={18} />
+      </button>
+      <input
+        type="range"
+        min={0}
+        max={1}
+        step={0.01}
+        value={isMuted ? 0 : volume}
+        onChange={(e) => setVolume(parseFloat(e.target.value))}
+        className="w-24 h-1"
+        style={{
+          background: `linear-gradient(to right, #1db954 ${(isMuted ? 0 : volume) * 100}%, rgba(255,255,255,0.1) ${(isMuted ? 0 : volume) * 100}%)`,
+        }}
+      />
+    </div>
+
+  </div>
+</footer>
     </>
   );
 }
