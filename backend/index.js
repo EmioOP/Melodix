@@ -1,14 +1,15 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
-require("dotenv").config();
+const hpp = require("hpp")
+const helmet = require("helmet")
 
 const authRoutes = require("./routes/authRoutes");
 const testRoutes = require("./routes/testRoutes");
 const playlistRoutes = require("./routes/playlistRoutes");
 const youtubeRoutes = require("./routes/youtubeRoutes");
 const streamRoutes = require("./routes/streamRoutes");
-const rateLimit = require('express-rate-limit');
+// const rateLimit = require('express-rate-limit');
 
 const app = express();
 
@@ -24,21 +25,15 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-// Global rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-	  limit: 50,
-    message:"Too many request from this IP, please try later"
-});
 
 
-
+app.use(hpp());
+app.use(helmet())
 
 app.use(cors(corsOptions));
 app.use(express.json());
 
-//security middlewares
-app.use("/api",limiter);
+
 
 // Routes
 app.use("/api/auth", authRoutes);
