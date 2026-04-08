@@ -9,7 +9,7 @@ const testRoutes = require("./routes/testRoutes");
 const playlistRoutes = require("./routes/playlistRoutes");
 const youtubeRoutes = require("./routes/youtubeRoutes");
 const streamRoutes = require("./routes/streamRoutes");
-// const rateLimit = require('express-rate-limit');
+require("dotenv").config();
 
 const app = express();
 
