@@ -25,8 +25,6 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-
-
 app.use(hpp());
 app.use(helmet())
 
